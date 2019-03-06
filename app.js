@@ -1,30 +1,28 @@
 const express = require("express");
 const app = express();
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.get("/api/getVideos", (req, res) => {
-  res.send(JSON.stringify(items));
+  res.send(items);
 });
 
 app.get("/api/filter", (req, res) => {
   const query = req.query;
-  const filteredArray = items.filter(val => val.source == query.source);
 
-  res.send(filteredArray);
-});
-
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE",
-    "Access-Control-Allow-Origin"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept",
-    "Access-Control-Allow-Origin"
-  );
-  next();
+  if (query.source === "-1") {
+    res.send(items);
+  } else {
+    const filteredArray = items.filter(val => val.source == query.source);
+    res.send(filteredArray);
+  }
 });
 
 const port = process.env.PORT || 8080;
